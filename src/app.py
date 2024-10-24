@@ -51,8 +51,10 @@ def run_prediction(request: Request, input_values: model_input)-> JSONResponse:
         log.info(f'Request received. Input Type: {type(input_values)},  Model inputs: {input_values}')
         with open(os.path.join(base_path,'data','encoder.pkl'),'rb') as enc_file:
             encoder = pickle.load(enc_file)
-            # encoder = OneHotEncoder()
-        transformed_values = encoder.transform(pd.DataFrame(input_values.model_dump))
+        input_dataframe = pd.DataFrame(data=input_values.model_dump(), index=range(0,1))
+        
+        # encoder = OneHotEncoder()
+        transformed_values = encoder.transform(input_dataframe)
         # transformer = encoder.transform(pd.DataFrame(input_values.model_dump))
         # transformed_values = transformer.transform_data_model(data_to_transform=input_values)
         log.info(f'Input data encoded. Input Type: {type(input_values)},  Encoded Data: {transformed_values}')
