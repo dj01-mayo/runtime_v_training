@@ -48,24 +48,24 @@ def test_model_input_value_defaults():
             app_input.medcond_yn == 'Missing' and
             app_input.race_ethnicity_combined == 'Missing')
 
-def test_runtime_data_transformation():
-    mock_request = {'current_status':'Laboratory-confirmed case',
-                    'sex':'Male',
-                    'age_group':'0 - 9 Years',
-                    'race_ethnicity_combined':'Black, Non-Hispanic',
-                    'hosp_yn':'Yes',
-                    'icu_yn': 'No',
-                    'medcond_yn':'Yes'
-                    }
-    app_input = model_input(**mock_request)
-    transformer = data_transformer(log=log)
-    transformed_model = transformer.transform_data_model(data_to_transform=app_input)
-    assert (transformed_model is not None and
-            transformed_model.sex != 'Male' and
-            transformed_model.hosp_yn == 1 and
-            transformed_model.icu_yn == 0 and
-            transformed_model.medcond_yn == 1 and
-            transformed_model.race_ethnicity_combined != 'Missing')
+# def test_runtime_data_transformation():
+#     mock_request = {'current_status':'Laboratory-confirmed case',
+#                     'sex':'Male',
+#                     'age_group':'0 - 9 Years',
+#                     'race_ethnicity_combined':'Black, Non-Hispanic',
+#                     'hosp_yn':'Yes',
+#                     'icu_yn': 'No',
+#                     'medcond_yn':'Yes'
+#                     }
+#     app_input = model_input(**mock_request)
+#     transformer = data_transformer(log=log)
+#     transformed_model = transformer.transform_data_model(data_to_transform=app_input)
+#     assert (transformed_model is not None and
+#             transformed_model.sex != 'Male' and
+#             transformed_model.hosp_yn == 1 and
+#             transformed_model.icu_yn == 0 and
+#             transformed_model.medcond_yn == 1 and
+#             transformed_model.race_ethnicity_combined != 'Missing')
 
 def test_model_prediction():
     mock_request = {'current_status':'Laboratory-confirmed case',

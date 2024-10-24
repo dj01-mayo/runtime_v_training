@@ -16,7 +16,7 @@ from pydantic import BaseModel,Field
 from utilities import data_transformer, model_input
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
@@ -49,8 +49,12 @@ def run_prediction(request: Request, input_values: model_input)-> JSONResponse:
     """
     if input_values is not None:
         log.info(f'Request received. Input Type: {type(input_values)},  Model inputs: {input_values}')
-        transformer = data_transformer(log=log)
-        transformed_values = transformer.transform_data_model(data_to_transform=input_values)
+        with open(os.path.join(base_path,'data','encoder.pkl'),'rb') as enc_file:
+            encoder = pickle.load(enc_file)
+            # encoder = OneHotEncoder()
+        transformed_values = encoder.transform(pd.DataFrame(input_values.model_dump))
+        # transformer = encoder.transform(pd.DataFrame(input_values.model_dump))
+        # transformed_values = transformer.transform_data_model(data_to_transform=input_values)
         log.info(f'Input data encoded. Input Type: {type(input_values)},  Encoded Data: {transformed_values}')
     else:
         return HTTPException(status_code=400,detail=f'Request received; but model inputs malformed or absent.')
@@ -61,9 +65,6 @@ def run_prediction(request: Request, input_values: model_input)-> JSONResponse:
     try:
         # log.info(f'Input dataframe: {pd.DataFrame(transformed_values.model_dump(),index=range(0,1)).to_dict()}')
         prediction = model.predict(transformed_values)
-        # prediction = ndarray()
-        # nda.
-        # pickle_bytes =pickle.dumps(prediction)
         pickle_bytes = prediction.tolist()
         
         log.info(f'Prediction complete: Shape - {prediction.shape}, Prediction - {prediction[:1]}')

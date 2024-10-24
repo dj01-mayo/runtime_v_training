@@ -5,4 +5,5 @@ transformers
 pydantic==2.9.2
 fastapi==0.109.2
 gunicorn==20.1.0
+numpy
 pandas
