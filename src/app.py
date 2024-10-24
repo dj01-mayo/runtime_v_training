@@ -52,11 +52,7 @@ def run_prediction(request: Request, input_values: model_input)-> JSONResponse:
         with open(os.path.join(base_path,'data','encoder.pkl'),'rb') as enc_file:
             encoder = pickle.load(enc_file)
         input_dataframe = pd.DataFrame(data=input_values.model_dump(), index=range(0,1))
-        
-        # encoder = OneHotEncoder()
         transformed_values = encoder.transform(input_dataframe)
-        # transformer = encoder.transform(pd.DataFrame(input_values.model_dump))
-        # transformed_values = transformer.transform_data_model(data_to_transform=input_values)
         log.info(f'Input data encoded. Input Type: {type(input_values)},  Encoded Data: {transformed_values}')
     else:
         return HTTPException(status_code=400,detail=f'Request received; but model inputs malformed or absent.')
@@ -65,7 +61,6 @@ def run_prediction(request: Request, input_values: model_input)-> JSONResponse:
         model = pickle.load(mdl)
     log.info(f'Loaded Model.')
     try:
-        # log.info(f'Input dataframe: {pd.DataFrame(transformed_values.model_dump(),index=range(0,1)).to_dict()}')
         prediction = model.predict(transformed_values)
         pickle_bytes = prediction.tolist()
         

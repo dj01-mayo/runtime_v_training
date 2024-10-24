@@ -17,8 +17,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
 # Set up logging.
-# This can be much simpler to use than print() statements.
-
+# This can be much more reliable to use than print() statements.
+# Logging will also give you more consistent results across environments.
 # Notice the use of getLogger() ... This helps you hook into
 # the existing logging python is running.
 log = logging.getLogger(__name__)
@@ -32,46 +32,12 @@ base_path = os.path.abspath(os.path.curdir)
 log.info(f'Loading data: {base_path}')
 data = pd.read_csv(os.path.join(base_path, 'data', 'testdata_COVID-19_Case_Surveillance_Public_Use_Data_May_2021.csv'), parse_dates=True)
 original_data = data
-enc = LabelEncoder()
-cols_to_transform = ['current_status',
-                     'sex',
-                     'age_group',
-                     'race_ethnicity_combined']
-
-# This function just provides a basic transformation
-# as several of the yes/no columns in the data have other values too. 
-def class_encoding(val):
-    if val in ["Missing","Unknown"]:
-        return 3
-    elif val == "No":
-        return 0
-    else:
-        return 1
     
 log.info(f'Encoding multiclass-Y/N columns.')
-
-# Encode the y/n multi-class columns as a default encoder doesn't handle this well.
-# Map() is a shortcut to perform the same action on item in a list or dataframe.
-# Since we're identifying a single column, the "items" end up being each row in the column.
-
-# data['medcond_yn'] = data['medcond_yn'].map(lambda x: class_encoding(x))
-# data['death_yn'] = data['death_yn'].map(lambda x: class_encoding(x))
-# data['icu_yn'] = data['icu_yn'].map(lambda x: class_encoding(x))
-# data['hosp_yn'] = data['hosp_yn'].map(lambda x: class_encoding(x))
-# data['cdc_case_earliest_dt'] = data['cdc_case_earliest_dt '].map(lambda x: datetime.strptime(x, '%Y/%m/%d').toordinal())
-# log.info(f'Encoding remaining columns.')
-# for col in cols_to_transform:
-#     data[col] = enc.fit_transform(data[col])
-# transformer = data_transformer(log=log)
-# encoded_data = transformer.transform_dataframe(data=data)
 # Omit columns which are not input values.
-
 X = data.drop(columns=['death_yn','cdc_case_earliest_dt ','cdc_report_dt','onset_dt','pos_spec_dt'])
-# dict_vect = DictVectorizer()
 onehot = OneHotEncoder()
 X_Encoded = onehot.fit_transform(X=X)
-# clean_data = data.drop(columns=['death_yn','cdc_case_earliest_dt ','cdc_report_dt','onset_dt','pos_spec_dt'])
-# X = dict_vect.fit_transform([clean_data.to_dict()])
 log.info(f'Training data sample: {X.head(n=10)}')
 # Limit the columns to only the one we want to see the prediction in.
 Y = data['death_yn']
@@ -108,9 +74,6 @@ if accuracy_percentage > 50:
     with open(os.path.join(base_path,'data','encoder.pkl'), 'wb') as f:
         pickle.dump(obj=onehot, file=f)
         f.close()
-    # with open(os.path.join(base_path,'data','model_params.json'), 'w') as f:
-    #     f.write(json.dumps(model_params))
-    #     f.close()
 else:
     warnings.warn(f'Model accuracy below threshold: Accuracy - {accuracy_percentage:.2f}')
 
