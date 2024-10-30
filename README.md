@@ -19,7 +19,8 @@ You can use this repository in a few ways:
 # Run the code locally
 ## Prerequisites
 1. You will need git installed on your local machine. The simplest means to accomplish this is installing GitHub [Desktop](https://desktop.github.com/download/).
-1. You will want a IDE to work in with the code. The source code was originally written and tested in [VS Code](https://code.visualstudio.com/), although any IDE suporting a python development environment will allow youto interact with the code.
+2. You will want a IDE to work in with the code. The source code was originally written and tested in [VS Code](https://code.visualstudio.com/), although any IDE suporting a python development environment will allow youto interact with the code.
+3. Download the related dataset [here](https://www.kaggle.com/datasets/darelljohnson/sample-logistical-reg/data) and add it to the data folder of this repository once you have cloned it..
 ## Establish your python environment
 1. Clone the repository to your local machine.
 2. Create a virtual environment by running the following command: ```python -m venv env```
